@@ -1,4 +1,14 @@
+
+
+import 'package:buraq/AllWidgets/Divider.dart';
+import 'package:buraq/AllWidgets/progressDialod.dart';
+import 'package:buraq/Assistants/resquestAssistant.dart';
+import 'package:buraq/Models/address.dart';
+import 'package:buraq/Models/placePredicitions.dart';
+import 'package:buraq/configMaps.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:provider/provider.dart';
 
 import '../DataHandler/appData.dart';
@@ -14,6 +24,8 @@ class SearchScreen extends StatefulWidget {
 class _SearchScreenState extends State<SearchScreen> {
 TextEditingController pickUpTextEditingController = TextEditingController();
 TextEditingController dropOffTextEditingController = TextEditingController();
+
+ List<PlacePredicitions> placePredictionList = [];
 
   @override
   Widget build(BuildContext context) {
@@ -124,6 +136,9 @@ return Provider.of<AppData>(context).pickupLocation.placeName;
                           child: Padding(
                             padding: EdgeInsets.all(3.0),
                             child: TextField(
+                              onChanged: (val){
+                                findPlace(val);
+                              },
                               controller: dropOffTextEditingController,
                               decoration: InputDecoration(
                                 hintText: "Where to?",
@@ -144,9 +159,119 @@ return Provider.of<AppData>(context).pickupLocation.placeName;
               
               ),
             ),
+            SizedBox(height: 8.0,),
+            //tile for displaying predictions
+            (placePredictionList.length > 0)?Padding(padding: EdgeInsets.symmetric(vertical: 8.0,horizontal: 16.0,),
+            child: ListView.separated(itemBuilder: (context,index){
+              return PredictionTile(placePredicitions: placePredictionList[index],);
+            }, separatorBuilder: (BuildContext context, int index)=>DividerWidget(), itemCount: placePredictionList.length,
+            shrinkWrap: true,
+              physics: ClampingScrollPhysics(),
+            ),
+            ):Container(),
+
           ],
         ),
       ),
     );
+  }
+
+  void findPlace(String placeName) async{
+    if(placeName.length >= 1){
+      String autoCompleteUrl = "https://maps.googleapis.com/maps/api/place/autocomplete/json?input=$placeName&key=$mapKey&sessiontoken=1234567890&components=country:pk";
+
+      var response = await RequestAssistant.getRequest(autoCompleteUrl);
+
+      if(response == 'failed'){
+        return;
+      }
+
+      if(response["status"]=="OK"){
+
+        var predictions = response["predictions"];
+
+        var placesList = (predictions as List).map((e) => PlacePredicitions.fromJson(e)).toList();
+        setState((){
+          placePredictionList = placesList;
+        });
+
+      }
+
+    }
+
+  }
+}
+
+
+class PredictionTile extends StatelessWidget {
+   PredictionTile({Key? key,required this.placePredicitions}) : super(key: key);
+
+  final PlacePredicitions placePredicitions;
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialButton(
+      padding: EdgeInsets.all(0.0),
+      onPressed: (){
+        print('this is in place pred');
+        print(placePredicitions.place_id);
+        getPlaceAddressDetails("${placePredicitions.place_id}", context);
+      },
+      child: Container(
+        child: Column(
+          children: [
+            SizedBox(width: 10.0,),
+            Row(
+              children: [
+                Icon(Icons.add_location),
+                SizedBox(width: 14.0,),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SizedBox(height: 8.0,),
+                      Text("${placePredicitions.main_Text}",overflow:TextOverflow.ellipsis,style: TextStyle(fontSize: 16.0),),
+                      SizedBox(height: 2.0,),
+                      Text("${placePredicitions.secondaryText}",style: TextStyle(fontSize: 16.0,color: Colors.grey),overflow:TextOverflow.ellipsis,),
+                      SizedBox(height: 8.0,),
+                    ],
+                  ),
+                )
+              ],
+            ),
+            SizedBox(width: 10.0,),
+          ],
+        ),
+      ),
+    );
+  }
+  void getPlaceAddressDetails(String placeId,context) async{
+
+    showDialog(context: context, builder: (BuildContext context)=>ProgressDialod(message: "Setting Dropoff, please wait..."));
+
+    String placeDetailsUrl = "https://maps.googleapis.com/maps/api/place/details/json?place_id=$placeId&key=$mapKey";
+    var res = await RequestAssistant.getRequest(placeDetailsUrl);
+    Navigator.pop(context);
+    if(res=='failed'){
+      return;
+    }
+
+    if(res["status"]=="OK"){
+
+      Address address = Address(placeName: res["result"]["name"], latitude: res["result"]["geometry"]["location"]["lat"], longititue: res["result"]["geometry"]["location"]["lng"],);
+      address.placeName = res["result"]["name"];
+      address.placeId = placeId;
+      address.latitude = res["result"]["geometry"]["location"]["lat"];
+      address.longititue = res["result"]["geometry"]["location"]["lng"];
+      Provider.of<AppData>(context,listen: false).updateDropOffLocation(address);
+      print("this is dropOff Location ::");
+      print(address.placeName);
+      print(address.longititue);
+      print(address.latitude);
+      print(":::::::::::::::::::::");
+      Navigator.pop(context,"obtainDirection");
+
+    }
+
   }
 }

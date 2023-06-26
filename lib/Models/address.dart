@@ -1,6 +1,6 @@
 class Address{
 
-  late String? placeFormatedAddress;
+  String? placeFormatedAddress;
   late String placeName;
   late String? placeId;
   late double latitude;

@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:buraq/AllScreens/loginScreen.dart';
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:buraq/AllScreens/mainscreen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -37,8 +38,16 @@ class _SplashScreenState extends State<SplashScreen>
   Widget build(BuildContext context) {
     Timer(
         Duration(seconds: 4),
-        () => Navigator.of(context).pushReplacement(MaterialPageRoute(
-            builder: (BuildContext context) => LoginScreen())));
+        () {
+          if(FirebaseAuth.instance.currentUser!=null){
+            Navigator.of(context).pushReplacement(MaterialPageRoute(
+                builder: (BuildContext context) => MainScreen()));
+          }else{
+            Navigator.of(context).pushReplacement(MaterialPageRoute(
+                builder: (BuildContext context) => LoginScreen()));
+          }
+
+        } );
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(
