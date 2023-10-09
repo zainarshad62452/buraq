@@ -55,6 +55,7 @@ dependencies:
   image_picker: ^0.8.6
   flutter_polyline_points: ^1.0.0
   url_launcher: ^6.1.11
+  flutter_stripe: ^9.2.2
   font_awesome_flutter: ^10.4.0
   flutter_geofire: ^2.0.3
   smooth_star_rating_null_safety: ^1.0.4+2

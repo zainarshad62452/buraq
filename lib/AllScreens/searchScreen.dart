@@ -213,8 +213,6 @@ class PredictionTile extends StatelessWidget {
     return MaterialButton(
       padding: EdgeInsets.all(0.0),
       onPressed: (){
-        print('this is in place pred');
-        print(placePredicitions.place_id);
         getPlaceAddressDetails("${placePredicitions.place_id}", context);
       },
       child: Container(
@@ -264,11 +262,6 @@ class PredictionTile extends StatelessWidget {
       address.latitude = res["result"]["geometry"]["location"]["lat"];
       address.longititue = res["result"]["geometry"]["location"]["lng"];
       Provider.of<AppData>(context,listen: false).updateDropOffLocation(address);
-      print("this is dropOff Location ::");
-      print(address.placeName);
-      print(address.longititue);
-      print(address.latitude);
-      print(":::::::::::::::::::::");
       Navigator.pop(context,"obtainDirection");
 
     }

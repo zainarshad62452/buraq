@@ -1,4 +1,9 @@
+import 'package:buraq/AllScreens/registerationScreen.dart';
+import 'package:buraq/Assistants/assistantMethod.dart';
+import 'package:buraq/configMaps.dart';
 import 'package:flutter/material.dart';
+
+import '../DataHandler/stripe.dart';
 class CollectFareDailog extends StatefulWidget {
 
   final String paymentMethod;
@@ -57,10 +62,22 @@ class _CollectFareDailogState extends State<CollectFareDailog> {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
               child: MaterialButton(
-                onPressed: (){
-
-                  Navigator.pop(context,"close");
-
+                onPressed: () async {
+                  if(widget.paymentMethod == "Cash"){
+                    Navigator.pop(context,"close");
+                  }else if(widget.paymentMethod == "Card"){
+                    await StripeServices.instance.initialize();
+                    await StripeServices.instance.startPurchase(widget.fareAmount!.toDouble(),
+                            (isSuccess, message) async {
+                          if (isSuccess) {
+                            AssistantMethods.sendCustomNotificationToDriver(driverToken,context,"You have recieved an amount of RS ${widget.fareAmount} by rider");
+                            displayToastMessage("Successfully", context);
+                            Navigator.pop(context,"close");
+                          } else {
+                            displayToastMessage("Error Please pay by cash", context);
+                          }
+                        },context);
+                  }
                 },
                 color: Colors.deepPurpleAccent,
               padding: EdgeInsets.all(17.0),

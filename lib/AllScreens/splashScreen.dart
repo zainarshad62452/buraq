@@ -111,7 +111,7 @@ class _SplashScreenState extends State<SplashScreen>
                                   duration: Duration(milliseconds: 700)),
                             ],
                             onTap: () {
-                              print("Tap Event");
+
                             },
                           ),
                         ),

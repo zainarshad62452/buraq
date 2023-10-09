@@ -31,7 +31,6 @@ static Future<String> searchCoordinateAddress(Position position,context) async{
     st3 = response['results'][0]['address_components'][3]['long_name'];
     st4 = response['results'][0]['address_components'][4]['long_name'];
     placeAddress = st1+", "+st2+", "+st3+", "+st4;
-    print(placeAddress);
 
     Address userPickupAddress = new Address(latitude: position.longitude,longititue: position.latitude,placeName: placeAddress);
     userPickupAddress.longititue = position.longitude;
@@ -48,13 +47,10 @@ static Future<String> searchCoordinateAddress(Position position,context) async{
   static Future<DirectionDetails?> obtainPlaceDirectionDetails(LatLng initialPosition,LatLng finalPosition) async{
   String directionUrl = "https://maps.googleapis.com/maps/api/directions/json?origin=${initialPosition.latitude},${initialPosition.longitude}&destination=${finalPosition.latitude},${finalPosition.longitude}&key=$mapKey";
   // String directionUrl = "https://maps.googleapis.com/maps/api/directions/json?origin=${initialPosition.latitude},${initialPosition.longitude}&destination=${finalPosition.latitude},${finalPosition.longitude}&key=$mapKey";
-
-  print("This is key $directionUrl");
   var res = await RequestAssistant.getRequest(directionUrl);
   if(res == "failed"){
     return null;
   }
-  print(res);
   DirectionDetails directionDetails = DirectionDetails();
   directionDetails.encodedPoints= res["routes"][0]["overview_polyline"]["points"];
 
@@ -117,6 +113,37 @@ static Future<String> searchCoordinateAddress(Position position,context) async{
     'id':'1',
     'status':'done',
     'ride_request_id': ride_request_id,
+  };
+
+  Map sendNotificationMap = {
+    'notification': notificationMap,
+    'data': dataMap,
+    'priority': 'High',
+    'to': token,
+  };
+
+  var res = await http.post(
+    Uri.parse('https://fcm.googleapis.com/fcm/send'),
+    headers: headerMap,
+    body: jsonEncode(sendNotificationMap),
+
+  );
+  }
+  static sendCustomNotificationToDriver(String token,context,String title) async {
+  Map<String,String> headerMap = {
+    'Content-Type' : 'application/json',
+    'Authorization' : serverToken,
+  };
+
+  Map notificationMap = {
+    'body' : title,
+    'title' : 'Payment'
+  };
+
+  Map dataMap = {
+    'click_action':'FLUTTER_NOTIFICATION_CLICK',
+    'id':'1',
+    'status':'done',
   };
 
   Map sendNotificationMap = {

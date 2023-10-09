@@ -5,6 +5,7 @@ import 'package:buraq/DataHandler/appData.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get_navigation/src/root/get_material_app.dart';
 import 'package:provider/provider.dart';
 import 'AllScreens/mainscreen.dart';
 
@@ -22,7 +23,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return new ChangeNotifierProvider(
       create: (context)=>AppData(),
-      child: MaterialApp(
+      child: GetMaterialApp(
         title: 'Buraaq Rider App',
         theme: ThemeData(
           primarySwatch: Colors.blue,
