@@ -2,7 +2,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'Models/allUsers.dart';
 import 'dart:convert';
-String mapKey = "AIzaSyBVTMfQEew4dmGxq4TUDlUFvEELJ9mbccM";
+// String mapKey = "AIzaSyCev2LI2DLPWPAqQkbPs0hSrJdL989c2Bc";
+// String mapKey = "AIzaSyDWt1GqrbFbH1fnH40LRytjU9l4ekHHycE";
+String mapKey = "AIzaSyC_n2DzkMvHK_wxXAGPm3Klk75LtyIwJ0I";
 
 const String stripePublishableKey = 'YOUR_PUBLISHABLE_KEY';
 const String stripeSecretKey = 'YOUR_SECRET_KEY';

@@ -89,7 +89,7 @@ class _SplashScreenState extends State<SplashScreen>
                         const Text(
                           'GET RIDE',
                           style: TextStyle(
-                            fontSize: 43.0,
+                            fontSize: 30.0,
                             fontFamily: 'Brand-Regular',
                             color: Color.fromARGB(255, 41, 41, 40),
                           ),
@@ -97,7 +97,7 @@ class _SplashScreenState extends State<SplashScreen>
                         const SizedBox(width: 20.0, height: 100.0),
                         DefaultTextStyle(
                           style: const TextStyle(
-                            fontSize: 40.0,
+                            fontSize: 25.0,
                             fontFamily: 'Brand-Bold',
                           ),
                           child: AnimatedTextKit(

@@ -25,6 +25,7 @@ static Future<String> searchCoordinateAddress(Position position,context) async{
   var response = await RequestAssistant.getRequest(url);
 
   if(response!="failed"){
+    print(response);
     // placeAddress = response["results"][0]["formatted_address"];
     st1 = response['results'][0]['address_components'][1]['long_name'];
     st2 = response['results'][0]['address_components'][2]['long_name'];

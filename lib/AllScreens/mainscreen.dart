@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:animated_text_kit/animated_text_kit.dart';
+import 'package:buraq/AllScreens/loginScreen.dart';
 import 'package:buraq/AllScreens/ratingScreen.dart';
 import 'package:buraq/AllScreens/registerationScreen.dart';
 import 'package:buraq/AllScreens/searchScreen.dart';
@@ -13,6 +14,7 @@ import 'package:buraq/Models/directionDetails.dart';
 import 'package:buraq/Models/nearbyAvailableDrivers.dart';
 import 'package:buraq/configMaps.dart';
 import 'package:buraq/main.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_geofire/flutter_geofire.dart';
@@ -324,8 +326,10 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
             desiredAccuracy: LocationAccuracy.high);
         currentPosition = position;
         LatLng latLngPosition = LatLng(position.latitude, position.longitude);
+        print(latLngPosition);
         CameraPosition cameraPosition =
             new CameraPosition(target: latLngPosition, zoom: 14);
+
         newGoogleMapController
             .animateCamera(CameraUpdate.newCameraPosition(cameraPosition));
         String address =
@@ -333,6 +337,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
 
         initGeoFireListner();
         uName = userCurrentInfo!.name!;
+
       } on Exception catch (e) {
         print(e);
       }
@@ -403,10 +408,6 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                               style: TextStyle(
                                   fontSize: 16.0, fontFamily: 'Brand-Bold'),
                             ),
-                            SizedBox(
-                              height: 6.0,
-                            ),
-                            Text('Visit Profile'),
                           ],
                         ),
                       ],
@@ -420,24 +421,14 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
               height: 12.0,
             ),
             //Drawer Body Controller
-            const ListTile(
-              leading: Icon(Icons.history),
+             ListTile(
+              onTap:() async {
+                await FirebaseAuth.instance.signOut();
+                Get.offAll(LoginScreen());
+              },
+              leading: Icon(Icons.logout),
               title: Text(
-                'History',
-                style: TextStyle(fontSize: 15.0),
-              ),
-            ),
-            const ListTile(
-              leading: Icon(Icons.person),
-              title: Text(
-                'Visit Profile',
-                style: TextStyle(fontSize: 15.0),
-              ),
-            ),
-            const ListTile(
-              leading: Icon(Icons.info),
-              title: Text(
-                'About',
+                'Logout',
                 style: TextStyle(fontSize: 15.0),
               ),
             ),
@@ -615,7 +606,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                                   height: 4.0,
                                 ),
                                 const Text(
-                                  'Your living home address',
+                                  'Click to get current Location',
                                   style: TextStyle(
                                       color: Colors.black54, fontSize: 12.0),
                                 ),
@@ -628,34 +619,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                         height: 10.0,
                       ),
                       const DividerWidget(),
-                      const SizedBox(
-                        height: 16.0,
-                      ),
-                      const Row(
-                        children: [
-                          Icon(
-                            Icons.work,
-                            color: Colors.grey,
-                          ),
-                          SizedBox(
-                            width: 12.0,
-                          ),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text('Add Work'),
-                              SizedBox(
-                                height: 4.0,
-                              ),
-                              Text(
-                                'Your office address',
-                                style: TextStyle(
-                                    color: Colors.black54, fontSize: 12.0),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
+
                     ],
                   ),
                 ),
